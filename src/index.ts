@@ -1,14 +1,45 @@
 import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
+import User from "./models/User";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-app.get("/", (_, res) => {
+app.use(express.json());
+
+app.get("/", (_req, res) => {
   res.send("TWP backend is running");
+});
+
+app.post("/signup", async (req, res) => {
+  // 1. pull email, password, name, role from req.body
+  const { email, password, name, role } = req.body;
+
+  if (!email || !password || !name || !role) {
+    return res.status(400).json({ message: "Missing required field" });
+  }
+
+  try {
+    // 2. hash the password with bcrypt
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+
+    // 3. create the user with User.create()
+    const user = await User.create({ name, email, password: hash, role });
+
+    // 4. send back a response
+    res.status(201).json({ message: "User created", userId: user._id });
+  } catch (err: any) {
+    if ((err.code = 11000)) {
+      return res.status(409).json({ message: "Email already registered" });
+    }
+    console.error(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
 });
 
 const MONGO_URI = process.env.MONGO_URI;
