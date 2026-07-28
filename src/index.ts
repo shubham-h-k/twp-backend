@@ -34,11 +34,38 @@ app.post("/signup", async (req, res) => {
     // 4. send back a response
     res.status(201).json({ message: "User created", userId: user._id });
   } catch (err: any) {
-    if ((err.code = 11000)) {
+    if (err.code === 11000) {
       return res.status(409).json({ message: "Email already registered" });
     }
     console.error(err);
     res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: "Missing required field" });
+  }
+
+  try {
+    const user = await User.findOne({ email }).select("+password");
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const matched = await bcrypt.compare(password, user.password);
+
+    if (!matched) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    return res.status(200).json({ message: "Login successfull" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Something went wrong" });
   }
 });
 
