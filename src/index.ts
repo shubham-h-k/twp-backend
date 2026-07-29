@@ -3,11 +3,19 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import User from "./models/User";
+import jwt from "jsonwebtoken";
 
 dotenv.config();
 
-const app = express();
 const PORT = process.env.PORT || 5001;
+const secret = process.env.JWT_SECRET;
+
+if (!secret) {
+  console.error("JWT_SECRET is not defined in .env");
+  process.exit(1);
+}
+
+const app = express();
 
 app.use(express.json());
 
@@ -62,7 +70,18 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    return res.status(200).json({ message: "Login successfull" });
+    const payload = {
+      userId: user._id,
+      role: user.role,
+      organization: user.organization,
+    };
+
+    const token = jwt.sign(payload, secret, { expiresIn: "1d" });
+
+    return res.status(200).json({
+      message: "Login successful",
+      token,
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Something went wrong" });
