@@ -31,15 +31,15 @@ manages everything on their behalf.
 
 ## Tech stack & why
 
-| Layer | Choice | Why |
-|---|---|---|
-| Runtime | **Node.js** | Reuse existing JS/TS knowledge across the stack; heavily represented in target roles. |
-| Language | **TypeScript** | Type safety, catches bugs before runtime, now table-stakes in the job market. |
-| Framework | **Express** | Minimal, most-documented, most in-demand Node framework; simplest for learning fundamentals. |
-| Database | **MongoDB (Atlas) + Mongoose** | Document-shaped data fits the model; matches day-job stack; common in target listings. |
-| Auth | **JWT + bcryptjs** | Stateless auth (no server-side sessions); bcryptjs avoids native-compile issues on deploy. |
-| Dev runner | **tsx** | Runs TypeScript directly with auto-restart; simpler than the older nodemon + ts-node combo. |
-| Deploy (planned) | **Vercel (frontend) + Railway/Render (backend)** | Free tiers, click-to-deploy; AWS deferred as its own chapter. |
+| Layer            | Choice                                           | Why                                                                                          |
+| ---------------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| Runtime          | **Node.js**                                      | Reuse existing JS/TS knowledge across the stack; heavily represented in target roles.        |
+| Language         | **TypeScript**                                   | Type safety, catches bugs before runtime, now table-stakes in the job market.                |
+| Framework        | **Express**                                      | Minimal, most-documented, most in-demand Node framework; simplest for learning fundamentals. |
+| Database         | **MongoDB (Atlas) + Mongoose**                   | Document-shaped data fits the model; matches day-job stack; common in target listings.       |
+| Auth             | **JWT + bcryptjs**                               | Stateless auth (no server-side sessions); bcryptjs avoids native-compile issues on deploy.   |
+| Dev runner       | **tsx**                                          | Runs TypeScript directly with auto-restart; simpler than the older nodemon + ts-node combo.  |
+| Deploy (planned) | **Vercel (frontend) + Railway/Render (backend)** | Free tiers, click-to-deploy; AWS deferred as its own chapter.                                |
 
 **Principle behind the choices:** pick the option that is widely used, well-documented,
 and adequate for the actual problem — not the newest or theoretically-fastest. Support
@@ -83,11 +83,11 @@ POST /api/auth/login
 
 ## API endpoints (so far)
 
-| Method | Path | Purpose | Success | Failure |
-|---|---|---|---|---|
-| GET | `/` | Health check | 200 | — |
-| POST | `/api/auth/signup` | Create a user | 201 | 400 missing fields, 409 duplicate email |
-| POST | `/api/auth/login` | Authenticate, get a JWT | 200 + token | 400 missing fields, 401 invalid credentials |
+| Method | Path               | Purpose                 | Success     | Failure                                     |
+| ------ | ------------------ | ----------------------- | ----------- | ------------------------------------------- |
+| GET    | `/`                | Health check            | 200         | —                                           |
+| POST   | `/api/auth/signup` | Create a user           | 201         | 400 missing fields, 409 duplicate email     |
+| POST   | `/api/auth/login`  | Authenticate, get a JWT | 200 + token | 400 missing fields, 401 invalid credentials |
 
 **Planned:** `/api/auth/me`, `/api/organizations`, `/api/employees`,
 `/api/applications` (with workflow transitions).
@@ -117,6 +117,24 @@ The server fails fast at startup if `MONGO_URI` or `JWT_SECRET` is missing.
 - `npm run dev` — run with auto-restart (tsx)
 - `npm run build` — compile TypeScript to `dist/`
 - `npm start` — run the compiled build
+
+---
+
+## Testing
+
+Auth is covered by an automated test suite (Vitest + Supertest) with **6 tests**: valid
+signup, missing fields, duplicate email, valid login, wrong password, unknown email, and a
+security test asserting that unknown-email and wrong-password return an _identical_ response
+(so the API can't be used to discover which emails are registered).
+
+Tests run against an **in-memory MongoDB** (`mongodb-memory-server`) that is wiped between
+every test — so they're isolated, repeatable, need no network, and never touch the real
+database. The Express app is exported from `app.ts` separately from the server start in
+`index.ts`, so Supertest exercises it in-memory with no open port.
+
+```bash
+npm test
+```
 
 ---
 
