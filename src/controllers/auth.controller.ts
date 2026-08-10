@@ -68,3 +68,7 @@ export async function login(req: Request, res: Response) {
     return res.status(500).json({ message: "Something went wrong" });
   }
 }
+
+export async function getMe(req: Request, res: Response) {
+  res.status(200).json({ user: req.user });
+}
