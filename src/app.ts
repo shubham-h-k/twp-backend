@@ -4,6 +4,8 @@ import authRoutes from "./routes/auth.routes";
 const app = express();
 app.use(express.json());
 
+app.disable("x-powered-by");
+
 app.get("/", (_req, res) => {
   res.send("TWP backend is running");
 });
