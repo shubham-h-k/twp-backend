@@ -3,13 +3,14 @@ import bcrypt from "bcryptjs";
 import User from "../models/User";
 import jwt from "jsonwebtoken";
 import { env } from "../config/env";
+import { API_MESSAGES } from "../constants/api.messages";
 
 export async function signup(req: Request, res: Response) {
   // 1. pull email, password, name, role from req.body
   const { email, password, name, role } = req.body;
 
   if (!email || !password || !name || !role) {
-    return res.status(400).json({ message: "Missing required field" });
+    return res.status(400).json({ message: API_MESSAGES.MISSING_FIELDS });
   }
 
   try {
@@ -21,13 +22,15 @@ export async function signup(req: Request, res: Response) {
     const user = await User.create({ name, email, password: hash, role });
 
     // 4. send back a response
-    res.status(201).json({ message: "User created", userId: user._id });
+    res
+      .status(201)
+      .json({ message: API_MESSAGES.USER_CREATED, userId: user._id });
   } catch (err: any) {
     if (err.code === 11000) {
-      return res.status(409).json({ message: "Email already registered" });
+      return res.status(409).json({ message: API_MESSAGES.DUPLICATE_EMAIL });
     }
     console.error(err);
-    res.status(500).json({ message: "Something went wrong" });
+    res.status(500).json({ message: API_MESSAGES.SERVER_ERROR });
   }
 }
 
@@ -35,20 +38,24 @@ export async function login(req: Request, res: Response) {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ message: "Missing required field" });
+    return res.status(400).json({ message: API_MESSAGES.MISSING_FIELDS });
   }
 
   try {
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res
+        .status(401)
+        .json({ message: API_MESSAGES.INVALID_CREDENTIALS });
     }
 
     const matched = await bcrypt.compare(password, user.password);
 
     if (!matched) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res
+        .status(401)
+        .json({ message: API_MESSAGES.INVALID_CREDENTIALS });
     }
 
     const payload = {
@@ -60,12 +67,12 @@ export async function login(req: Request, res: Response) {
     const token = jwt.sign(payload, env.JWT_SECRET, { expiresIn: "1d" });
 
     return res.status(200).json({
-      message: "Login successful",
+      message: API_MESSAGES.LOGIN_SUCCESS,
       token,
     });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: "Something went wrong" });
+    return res.status(500).json({ message: API_MESSAGES.SERVER_ERROR });
   }
 }
 
