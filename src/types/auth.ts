@@ -1,5 +1,7 @@
+import { Role } from "../constants/roles";
+
 export interface AuthPayload {
   userId: string;
-  role: "org_staff" | "caseworker";
+  role: Role;
   organization?: string;
 }
