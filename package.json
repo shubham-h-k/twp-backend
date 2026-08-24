@@ -9,7 +9,9 @@
     "start": "node dist/index.js",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "test:run": "vitest run",
+    "check": "npm run lint && npm run typecheck && npm run test:run"
   },
   "keywords": [],
   "author": "",
