@@ -22,6 +22,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
     req.user = payload as AuthPayload;
     next();
   } catch (err) {
+    console.error("Token verification failed", err);
     return res.status(401).json({ message: API_MESSAGES.UNAUTHORIZED });
   }
 }

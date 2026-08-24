@@ -25,8 +25,13 @@ export async function signup(req: Request, res: Response) {
     res
       .status(201)
       .json({ message: API_MESSAGES.USER_CREATED, userId: user._id });
-  } catch (err: any) {
-    if (err.code === 11000) {
+  } catch (err) {
+    if (
+      err !== null &&
+      typeof err === "object" &&
+      "code" in err &&
+      err.code === 11000
+    ) {
       return res.status(409).json({ message: API_MESSAGES.DUPLICATE_EMAIL });
     }
     console.error(err);

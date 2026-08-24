@@ -13,7 +13,7 @@ app.get("/", (_req, res) => {
 
 app.use("/api/v1/auth", authRoutes);
 
-app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err);
   res.status(500).json({ message: API_MESSAGES.SERVER_ERROR });
 });
