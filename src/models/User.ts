@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { ROLES } from "../constants/roles";
+import { MODELS } from "../constants/models";
 
 const userSchema = new mongoose.Schema(
   {
@@ -13,7 +14,10 @@ const userSchema = new mongoose.Schema(
     },
     password: { type: String, required: true, select: false },
     role: { type: String, required: true, enum: ROLES },
-    organization: { type: mongoose.Schema.Types.ObjectId, ref: "Organization" },
+    organization: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: MODELS.ORGANIZATION,
+    },
   },
   { timestamps: true },
 );
