@@ -49,7 +49,7 @@ export async function login(req: Request, res: Response) {
   try {
     const user = await User.findOne({ email }).select("+password");
 
-    if (!user) {
+    if (!user || !user.password) {
       return res
         .status(401)
         .json({ message: API_MESSAGES.INVALID_CREDENTIALS });

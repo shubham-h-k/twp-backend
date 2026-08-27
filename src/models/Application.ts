@@ -2,10 +2,19 @@ import mongoose from "mongoose";
 import { MODELS } from "../constants/models";
 import {
   APPLICATION_STATUSES,
+  ApplicationStatus,
   DEFAULT_APPLICATION_STATUS,
 } from "../constants/application.status";
 
-const applicationSchema = new mongoose.Schema(
+interface IApplication {
+  employee: mongoose.Types.ObjectId;
+  organization: mongoose.Types.ObjectId;
+  status: ApplicationStatus;
+  caseworker?: mongoose.Types.ObjectId;
+  createdBy: mongoose.Types.ObjectId;
+}
+
+const applicationSchema = new mongoose.Schema<IApplication>(
   {
     employee: {
       type: mongoose.Schema.Types.ObjectId,
@@ -39,4 +48,7 @@ const applicationSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-export default mongoose.model(MODELS.APPLICATION, applicationSchema);
+export default mongoose.model<IApplication>(
+  MODELS.APPLICATION,
+  applicationSchema,
+);

@@ -1,8 +1,16 @@
 import mongoose from "mongoose";
-import { ROLES } from "../constants/roles";
+import { Role, ROLES } from "../constants/roles";
 import { MODELS } from "../constants/models";
 
-const userSchema = new mongoose.Schema(
+interface IUser {
+  name: string;
+  email: string;
+  password?: string;
+  role: Role;
+  organization?: mongoose.Types.ObjectId;
+}
+
+const userSchema = new mongoose.Schema<IUser>(
   {
     name: { type: String, required: true },
     email: {
@@ -22,4 +30,4 @@ const userSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model<IUser>(MODELS.USER, userSchema);
