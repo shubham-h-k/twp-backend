@@ -7,7 +7,7 @@ import { API_MESSAGES } from "../constants/api.messages";
 
 export async function signup(req: Request, res: Response) {
   // 1. pull email, password, name, role from req.body
-  const { email, password, name, role } = req.body;
+  const { email, password, name, role, organization } = req.body || {};
 
   if (!email || !password || !name || !role) {
     return res.status(400).json({ message: API_MESSAGES.MISSING_FIELDS });
@@ -18,8 +18,19 @@ export async function signup(req: Request, res: Response) {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
 
+    // TEMPORARY: accepting organization from the client is a mass-assignment
+    // vulnerability — any user could assign themselves to any tenant.
+    // Replace with: signup becomes protected, organization inherited from req.user.
+    // Tracked for the seed-script work.
+
     // 3. create the user with User.create()
-    const user = await User.create({ name, email, password: hash, role });
+    const user = await User.create({
+      name,
+      email,
+      password: hash,
+      role,
+      organization,
+    });
 
     // 4. send back a response
     res
@@ -40,7 +51,7 @@ export async function signup(req: Request, res: Response) {
 }
 
 export async function login(req: Request, res: Response) {
-  const { email, password } = req.body;
+  const { email, password } = req.body || {};
 
   if (!email || !password) {
     return res.status(400).json({ message: API_MESSAGES.MISSING_FIELDS });

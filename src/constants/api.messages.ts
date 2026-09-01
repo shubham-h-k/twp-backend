@@ -6,6 +6,9 @@ export const API_MESSAGES = {
   MISSING_FIELDS: "Missing required field",
   DUPLICATE_EMAIL: "Email already registered",
   SERVER_ERROR: "Something went wrong",
+  EMPLOYEE_NOT_FOUND: "Employee not found",
+  APPLICATION_CREATED: "Application created",
+  INVALID_ID: "Invalid ID",
 
   // success
   USER_CREATED: "User created",

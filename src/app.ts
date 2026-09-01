@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import authRoutes from "./routes/auth.routes";
+import applicationRoutes from "./routes/application.routes";
 import { API_MESSAGES } from "./constants/api.messages";
 
 const app = express();
@@ -12,6 +13,7 @@ app.get("/", (_req, res) => {
 });
 
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/applications", applicationRoutes);
 
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err);
