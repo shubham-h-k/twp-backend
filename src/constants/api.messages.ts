@@ -9,6 +9,7 @@ export const API_MESSAGES = {
   EMPLOYEE_NOT_FOUND: "Employee not found",
   APPLICATION_CREATED: "Application created",
   INVALID_ID: "Invalid ID",
+  ROUTE_NOT_FOUND: "Route not found",
 
   // success
   USER_CREATED: "User created",

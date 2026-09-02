@@ -19,6 +19,12 @@ apiRouter.use("/applications", applicationRoutes);
 
 app.use("/api/v1", apiRouter);
 
+// 404 handler - runs when no route matched
+app.use((_req, res) => {
+  res.status(404).json({ message: API_MESSAGES.ROUTE_NOT_FOUND });
+});
+
+// global error handler — must stay last
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err);
   res.status(500).json({ message: API_MESSAGES.SERVER_ERROR });
