@@ -10,6 +10,7 @@ export const API_MESSAGES = {
   APPLICATION_CREATED: "Application created",
   INVALID_ID: "Invalid ID",
   ROUTE_NOT_FOUND: "Route not found",
+  INVALID_INPUT: "Invalid input",
 
   // success
   USER_CREATED: "User created",

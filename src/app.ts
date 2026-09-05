@@ -27,6 +27,19 @@ app.use((_req, res) => {
 // global error handler — must stay last
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err);
+
+  const status =
+    err !== null &&
+    typeof err === "object" &&
+    "status" in err &&
+    typeof err.status === "number"
+      ? err.status
+      : 500;
+
+  res.status(status).json({
+    message:
+      status >= 500 ? API_MESSAGES.SERVER_ERROR : API_MESSAGES.INVALID_INPUT,
+  });
   res.status(500).json({ message: API_MESSAGES.SERVER_ERROR });
 });
 
