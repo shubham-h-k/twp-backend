@@ -1,14 +1,8 @@
 import { describe, expect, it } from "vitest";
 import request from "supertest";
 import app from "../app";
-
-const AUTH = "/api/v1/auth";
-const validUser = {
-  name: "Test user",
-  email: "test@test.com",
-  password: "test123",
-  role: "org_staff",
-};
+import { validUser } from "./fixtures";
+import { AUTH } from "./constants";
 
 describe("Auth routes", () => {
   // 1

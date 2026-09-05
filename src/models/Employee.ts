@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { MODELS } from "../constants/models";
 
-interface IEmployee {
+export interface IEmployee {
   firstName: string;
   lastName?: string;
   email?: string;

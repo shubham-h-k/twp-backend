@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { MODELS } from "../constants/models";
 
-interface IOrganization {
+export interface IOrganization {
   name: string;
 }
 
