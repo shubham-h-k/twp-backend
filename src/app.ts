@@ -40,7 +40,6 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     message:
       status >= 500 ? API_MESSAGES.SERVER_ERROR : API_MESSAGES.INVALID_INPUT,
   });
-  res.status(500).json({ message: API_MESSAGES.SERVER_ERROR });
 });
 
 export default app;
