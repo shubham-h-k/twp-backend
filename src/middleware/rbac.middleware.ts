@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { API_MESSAGES } from "../constants/api.messages";
 import { Role } from "../constants/roles";
 
+// this function answers the question: is this role allowed through this door?
 export function requireRole(...roles: Role[]) {
   // this outer function runs ONCE, when you set up the route
   return function (req: Request, res: Response, next: NextFunction) {
