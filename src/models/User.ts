@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { Role, ROLES } from "../constants/roles";
 import { MODELS } from "../constants/models";
 
-interface IUser {
+export interface IUser {
   name: string;
   email: string;
   password?: string;

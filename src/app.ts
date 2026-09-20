@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response, Router } from "express";
+import "./models";
 import authRoutes from "./routes/auth.routes";
 import applicationRoutes from "./routes/application.routes";
 import { API_MESSAGES } from "./constants/api.messages";
