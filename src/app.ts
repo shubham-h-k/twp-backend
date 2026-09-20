@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response, Router } from "express";
 import "./models";
 import authRoutes from "./routes/auth.routes";
 import applicationRoutes from "./routes/application.routes";
+import employeeRoutes from "./routes/employee.routes";
 import { API_MESSAGES } from "./constants/api.messages";
 
 const app = express();
@@ -17,6 +18,7 @@ const apiRouter = Router();
 
 apiRouter.use("/auth", authRoutes);
 apiRouter.use("/applications", applicationRoutes);
+apiRouter.use("/employees", employeeRoutes);
 
 app.use("/api/v1", apiRouter);
 

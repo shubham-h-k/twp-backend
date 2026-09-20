@@ -5,14 +5,15 @@ import {
   createApplication,
   getApplications,
 } from "../controllers/application.controller";
+import { ROLE } from "../constants/roles";
 
 const router = Router();
 
-router.post("/", requireAuth, requireRole("org_staff"), createApplication);
+router.post("/", requireAuth, requireRole(ROLE.ORG_STAFF), createApplication);
 router.get(
   "/",
   requireAuth,
-  requireRole("org_staff", "caseworker"),
+  requireRole(ROLE.ORG_STAFF, ROLE.CASEWORKER),
   getApplications,
 );
 

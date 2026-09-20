@@ -37,6 +37,7 @@ const employeeSchema = new mongoose.Schema<IEmployee>(
     passportNumber: {
       type: String,
       trim: true,
+      select: false,
     },
   },
   { timestamps: true },

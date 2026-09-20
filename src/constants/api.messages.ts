@@ -7,6 +7,7 @@ export const API_MESSAGES = {
   DUPLICATE_EMAIL: "Email already registered",
   SERVER_ERROR: "Something went wrong",
   EMPLOYEE_NOT_FOUND: "Employee not found",
+  EMPLOYEE_CREATED: "Employee created",
   APPLICATION_CREATED: "Application created",
   INVALID_ID: "Invalid ID",
   ROUTE_NOT_FOUND: "Route not found",
