@@ -3,28 +3,17 @@ import request from "supertest";
 import app from "../app";
 import Employee, { IEmployee } from "../models/Employee";
 import Organization, { IOrganization } from "../models/Organization";
-import { validUser } from "./fixtures";
 import { HydratedDocument } from "mongoose";
-import { APPLICATIONS, AUTH } from "./constants";
+import { APPLICATIONS } from "./constants";
 import Application from "../models/Application";
 import User, { IUser } from "../models/User";
+import { loginAs } from "./helpers";
 
 let orgA: HydratedDocument<IOrganization>;
 let orgB: HydratedDocument<IOrganization>;
 let employee1: HydratedDocument<IEmployee>;
 let employee2: HydratedDocument<IEmployee>;
 let creator: HydratedDocument<IUser>;
-
-async function loginAs(overrides = {}) {
-  const userData = { ...validUser, ...overrides };
-  await request(app).post(`${AUTH}/signup`).send(userData);
-  const login = await request(app)
-    .post(`${AUTH}/login`)
-    .send({ email: userData.email, password: userData.password });
-  const user = await User.findOne({ email: userData.email });
-  if (!user) throw new Error(`loginAs failed to create user ${userData.email}`);
-  return { token: login.body.token, user };
-}
 
 describe("Application routes", () => {
   beforeEach(async () => {
