@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
 import { API_MESSAGES } from "../constants/api.messages";
-import Employee from "../models/Employee";
-import Application from "../models/Application";
 import mongoose from "mongoose";
 import { ROLE } from "../constants/roles";
 import { assertNever } from "../utils/assert";
+import { Application, Employee } from "../models";
 
 export async function createApplication(req: Request, res: Response) {
   const { employeeId } = req.body || {};
@@ -72,6 +71,7 @@ export async function getApplications(req: Request, res: Response) {
   try {
     const [applications, total] = await Promise.all([
       Application.find(filter)
+        .sort({ createdAt: -1, _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit)
         .populate("employee", "firstName lastName")
