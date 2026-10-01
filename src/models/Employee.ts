@@ -46,7 +46,7 @@ const employeeSchema = new mongoose.Schema<IEmployee>(
 // unique per organization, not globally
 employeeSchema.index(
   { organization: 1, email: 1 },
-  { unique: true, sparse: true },
+  { unique: true, partialFilterExpression: { email: { $type: "string" } } },
 );
 
 export default mongoose.model<IEmployee>(MODELS.EMPLOYEE, employeeSchema);

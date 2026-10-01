@@ -161,4 +161,31 @@ describe("Employee routes", () => {
     expect(emp2.body.message).toBe("Employee created");
     expect(emp2.body.employee.organization).toBe(org2._id.toString());
   });
+
+  // 9
+  it("allows multiple employees without an email in the same organization", async () => {
+    const org = await Organization.create({ name: "AD Tech" });
+    const emp = {
+      firstName: "A",
+      birthDate: "1998-07-03",
+      nationality: "India",
+    };
+
+    const { token } = await loginAs({ organization: org._id });
+    const res1 = await request(app)
+      .post(EMPLOYEES)
+      .send(emp)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res1.status).toBe(201);
+    expect(res1.body.message).toBe("Employee created");
+
+    const res2 = await request(app)
+      .post(EMPLOYEES)
+      .send(emp)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res2.status).toBe(201);
+    expect(res2.body.message).toBe("Employee created");
+  });
 });

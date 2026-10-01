@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "test:run": "vitest run",
-    "check": "npm run lint && npm run typecheck && npm run test:run"
+    "check": "npm run lint && npm run typecheck && npm run test:run",
+    "db:sync-indexes": "tsx scripts/sync-indexes.ts"
   },
   "keywords": [],
   "author": "",
