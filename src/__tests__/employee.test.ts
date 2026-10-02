@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { loginAs } from "./helpers";
-import { Organization } from "../models";
+import { Employee, Organization } from "../models";
 import request from "supertest";
 import app from "../app";
 import { EMPLOYEES } from "./constants";
@@ -25,7 +25,7 @@ describe("Employee routes", () => {
   });
 
   // 2
-  it("does not return passportNumber in the response", async () => {
+  it("does not expose passportNumber in the response", async () => {
     const org = await Organization.create({ name: "Ad tech" });
     const { token } = await loginAs({ organization: org._id });
     const res = await request(app)
@@ -187,5 +187,100 @@ describe("Employee routes", () => {
 
     expect(res2.status).toBe(201);
     expect(res2.body.message).toBe("Employee created");
+  });
+
+  // 10
+  it("lists only the user's organization's employees", async () => {
+    const [orgA, orgB] = await Organization.create([
+      { name: "A" },
+      { name: "B" },
+    ]);
+    const base = {
+      firstName: "A",
+      birthDate: "1995-09-12",
+      nationality: "India",
+    };
+    await Employee.create([
+      {
+        ...base,
+        organization: orgA._id,
+      },
+      {
+        ...base,
+        organization: orgA._id,
+      },
+      {
+        ...base,
+        organization: orgB._id,
+      },
+    ]);
+
+    const { token } = await loginAs({ organization: orgA._id });
+
+    const res = await request(app)
+      .get(EMPLOYEES)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.employees).toHaveLength(2);
+    expect(res.body.pagination.total).toBe(2);
+    const orgIds = res.body.employees.map(
+      (e: { organization: string }) => e.organization,
+    );
+    expect(orgIds.every((id: string) => id === orgA._id.toString())).toBe(true);
+  });
+
+  // 11
+  it("does not expose passportNumber when listing employees", async () => {
+    const org = await Organization.create({ name: "AD Tech" });
+    await Employee.create({
+      firstName: "A",
+      organization: org._id,
+      birthDate: "1993-08-03",
+      nationality: "India",
+      passportNumber: "ANFDFN",
+    });
+    const { token } = await loginAs({ organization: org._id });
+    const res = await request(app)
+      .get(EMPLOYEES)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.employees).toHaveLength(1);
+    for (const e of res.body.employees) {
+      expect(e).not.toHaveProperty("passportNumber");
+    }
+  });
+
+  // 12
+  it("rejects employee listing by a caseworker", async () => {
+    const { token } = await loginAs({ role: "caseworker" });
+    const res = await request(app)
+      .get(EMPLOYEES)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.status).toBe(403);
+    expect(res.body.message).toBe("Not permitted");
+  });
+
+  // 13
+  it("rejects employee listing without a token", async () => {
+    const res = await request(app).get(EMPLOYEES);
+
+    expect(res.status).toBe(401);
+    expect(res.body.message).toBe("Unauthorized");
+  });
+
+  // 14
+  it("caps page size at 100 when listing employees", async () => {
+    const org = await Organization.create({ name: "AD Tech" });
+
+    const { token } = await loginAs({ organization: org._id });
+    const res = await request(app)
+      .get(`${EMPLOYEES}?limit=5000`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.pagination.limit).toBe(100);
   });
 });
